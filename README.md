@@ -1,13 +1,13 @@
-# Video Streaming Platform – API Gateway
+# Streamix – API Gateway
 
-![Build](https://img.shields.io/github/actions/workflow/status/mzilin/vsp-infra-gateway/build.yml?label=Build&logo=github&logoColor=white&style=flat)
-![Coverage](https://img.shields.io/codecov/c/github/mzilin/vsp-infra-gateway?label=Coverage&logo=codecov&logoColor=white&style=flat)
+![Build](https://img.shields.io/github/actions/workflow/status/mzilin/streamix-infra-gateway/build.yml?label=Build&logo=github&logoColor=white&style=flat)
+![Coverage](https://img.shields.io/codecov/c/github/mzilin/streamix-infra-gateway?label=Coverage&logo=codecov&logoColor=white&style=flat)
 ![Status](https://img.shields.io/badge/status-in_progress-yellow?label=Status)
 
 
-This repository contains the **API Gateway** microservice for the **Video Streaming Platform**, deployed in the **Infrastructure** cluster. It serves as the entry point for all client requests and coordinates communication between backend services.
+This repository contains the **API Gateway** microservice for the **Streamix** (Video Streaming Platform), deployed in the **Infrastructure** cluster. It serves as the entry point for all client requests and coordinates communication between backend services.
 
-For a complete system overview and links to all microservices, please refer to the [Microservices Hub Repository](https://github.com/mzilin/vsp-microservices-hub).
+For a complete system overview and links to all microservices, please refer to the [Microservices Hub Repository](https://github.com/mzilin/streamix-microservices-hub).
 
 
 ## Table of Contents
@@ -96,12 +96,12 @@ Ensure you have the following installed on your machine:
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/mzilin/vsp-infra-gateway.git
+    git clone https://github.com/mzilin/streamix-infra-gateway.git
     ```
 
 2. Switch to the `main` branch:
     ```bash
-    cd vsp-infra-gateway
+    cd streamix-infra-gateway
     ```
 
 3. Build the project and run tests:
@@ -121,11 +121,11 @@ Ensure you have the following installed on your machine:
 
 1. Build the Docker image:
     ```bash
-   docker build -t vsp-infra-gateway:latest .
+   docker build -t streamix-infra-gateway:latest .
     ```
 2. Run the container:
     ```bash
-   docker run --rm --name vsp_gateway -p 8080:8080 vsp-infra-gateway:latest
+   docker run --rm --name streamix_gateway -p 8080:8080 streamix-infra-gateway:latest
     ```
 
 
