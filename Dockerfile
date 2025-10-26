@@ -11,7 +11,7 @@ FROM eclipse-temurin:21-jdk-alpine
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
 WORKDIR /app
-COPY --from=build /app/build/libs/vsp-infra-gateway-*.jar app.jar
+COPY --from=build /app/build/libs/streamix-infra-gateway-*.jar app.jar
 RUN chown appuser:appgroup app.jar
 
 USER appuser
