@@ -4,12 +4,12 @@ import com.mariuszilinskas.streamix.infra.gateway.dto.JwtPayload;
 import com.mariuszilinskas.streamix.infra.gateway.service.JwtService;
 import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 import java.util.ArrayList;
 import java.util.List;
 
+@NullMarked
 @Component
 @RequiredArgsConstructor
 public class AuthenticationFilter implements WebFilter {
@@ -30,9 +31,8 @@ public class AuthenticationFilter implements WebFilter {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
     private final JwtService jwtService;
 
-    @NonNull
     @Override
-    public Mono<Void> filter(@NonNull ServerWebExchange exchange, @NonNull WebFilterChain chain) {
+    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
 
         if (AppUtils.isPublicPath.test(request)) {

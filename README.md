@@ -87,7 +87,7 @@ Follow the steps below to set up your local development environment and run the 
 
 Ensure you have the following installed on your machine:
    - [Java JDK 21](https://www.oracle.com/uk/java/technologies/downloads/#java21)
-   - [Gradle 8.14](https://gradle.org/)
+   - [Gradle 9.5.1](https://gradle.org/)
    - [Docker](https://docs.docker.com/get-started/get-docker/)
    - [Docker Compose](https://docs.docker.com/compose/)
 
