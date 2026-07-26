@@ -42,9 +42,9 @@ By consolidating these concerns, the API Gateway simplifies client interactions 
 This service is built using a modern, cloud-native Java stack, optimised for reactive, scalable microservices:
 
 - **Java** `21`: LTS version with enhanced performance and modern language features.
-- **Spring Boot** `3.4.5`: Rapid development framework for standalone, production-ready Java apps.
-- **Spring Cloud** `2024.0.0`: Provides essential microservice components like config management, service discovery and API routing.
-- **Gradle** `8.14`: Powerful build tool with fast incremental builds and powerful dependency management.
+- **Spring Boot** `4.1.0`: Rapid development framework for standalone, production-ready Java apps.
+- **Spring Cloud** `2025.1.2`: Provides essential microservice components like config management, service discovery and API routing.
+- **Gradle** `9.5.1`: Powerful build tool with fast incremental builds and powerful dependency management.
 - **Docker**: Containerises apps for consistent, portable development and deployment.
 
 
@@ -87,7 +87,7 @@ Follow the steps below to set up your local development environment and run the 
 
 Ensure you have the following installed on your machine:
    - [Java JDK 21](https://www.oracle.com/uk/java/technologies/downloads/#java21)
-   - [Gradle 8.14](https://gradle.org/)
+   - [Gradle 9.5.1](https://gradle.org/)
    - [Docker](https://docs.docker.com/get-started/get-docker/)
    - [Docker Compose](https://docs.docker.com/compose/)
 
