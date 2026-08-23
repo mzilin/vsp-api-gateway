@@ -1,0 +1,76 @@
+package com.mariuszilinskas.streamix.infra.gateway.filter;
+
+import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
+import org.springframework.core.Ordered;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
+import java.util.UUID;
+
+public final class StreamixLoggingWebFilter implements WebFilter, Ordered {
+
+    private final String serviceName;
+    private final String environment;
+
+    public StreamixLoggingWebFilter(String serviceName, String environment) {
+        this.serviceName = serviceName;
+        this.environment = environment;
+    }
+
+    @Override
+    @NonNull
+    public Mono<Void> filter(
+            @NonNull ServerWebExchange exchange,
+            @NonNull WebFilterChain chain
+    ) {
+        String correlationId = resolveCorrelationId(
+                exchange.getRequest().getHeaders().getFirst(AppUtils.CORRELATION_HEADER)
+        );
+
+        exchange.getResponse().getHeaders().set(AppUtils.CORRELATION_HEADER, correlationId);
+
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(r -> r.headers(h -> {
+                    h.set(AppUtils.CORRELATION_HEADER, correlationId);
+                    h.remove(AppUtils.USER_ID_HEADER);
+                }))
+                .build();
+
+        Map<String, String> mdcMap = Map.of(
+                AppUtils.MDC_CORRELATION_ID, correlationId,
+                AppUtils.MDC_SERVICE, serviceName,
+                AppUtils.MDC_ENVIRONMENT, environment
+        );
+
+        return chain
+                .filter(mutatedExchange)
+                .contextWrite(ctx -> ctx.put(AppUtils.MDC_CONTEXT_KEY, mdcMap));
+    }
+
+    private static String resolveCorrelationId(@Nullable String value) {
+        return isValidCorrelationId(value) ? value : UUID.randomUUID().toString();
+    }
+
+    private static boolean isValidCorrelationId(@Nullable String value) {
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
+
+}
