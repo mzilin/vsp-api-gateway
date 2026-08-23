@@ -71,6 +71,9 @@ app:
 
 # Logging properties
 logging:
+  structured:
+    format:
+      console: ecs
   level:
     root: INFO
     org.springframework.web: INFO
