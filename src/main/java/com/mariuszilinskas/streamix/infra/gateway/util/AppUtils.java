@@ -5,7 +5,7 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import java.util.List;
 import java.util.function.Predicate;
 
-public abstract class AppUtils {
+public final class AppUtils {
 
     private AppUtils() {
         // Private constructor to prevent instantiation

@@ -2,7 +2,7 @@ package com.mariuszilinskas.streamix.infra.gateway.util;
 
 import java.util.UUID;
 
-public abstract class TestUtils {
+public final class TestUtils {
 
     private TestUtils() {
         // Private constructor to prevent instantiation
