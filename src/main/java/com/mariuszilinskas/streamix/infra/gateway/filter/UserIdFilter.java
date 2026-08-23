@@ -27,9 +27,9 @@ public class UserIdFilter implements WebFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         String requestURI = exchange.getRequest().getURI().getPath();
 
-        if (requestURI.contains(AppUtils.USER_ID)) {
+        if (requestURI.contains(AppUtils.PATH_USER_ID)) {
             UUID userId = jwtService.extractUserId(exchange);
-            String modifiedURI = requestURI.replace(AppUtils.USER_ID, userId.toString());
+            String modifiedURI = requestURI.replace(AppUtils.PATH_USER_ID, userId.toString());
             logger.info("Converting _USER_ID_ path to [userId: '{}']", userId);
 
             return chain.filter(exchange.mutate().request(
