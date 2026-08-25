@@ -3,25 +3,15 @@ eureka:
   client:
     fetchRegistry: false
     registerWithEureka: false
-#    serviceUrl:
-#      defaultZone: http://localhost:8761/eureka
 
+# Management configuration for CI
 management:
-  tracing:
-    export:
-      enabled: false
-#  opentelemetry:
-#    tracing:
-#      export:
-#        otlp:
-#          endpoint: http://localhost:4318/v1/traces
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
   otlp:
     metrics:
       export:
-        enabled: false
-#        url: http://localhost:4318/v1/metrics
-
-app:
-  allowedOrigins: http://localhost:3077
-  accessTokenSecret: dummy-secret
-  frontendBaseUrl: http://localhost:3077
+        url: http://localhost:4318/v1/metrics
