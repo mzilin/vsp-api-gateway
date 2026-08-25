@@ -4,7 +4,20 @@ eureka:
     fetchRegistry: false
     registerWithEureka: false
 
+# Management configuration for CI
+management:
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: http://localhost:4318/v1/traces
+  otlp:
+    metrics:
+      export:
+        url: http://localhost:4318/v1/metrics
+
+# App configuration for CI
 app:
-  allowedOrigins: http://localhost:3077
-  accessTokenSecret: dummy-secret
-  frontendBaseUrl: http://localhost:3077
+  allowedOrigins: http://localhost:3000
+  accessTokenSecret: dummy-secret-key
+  frontendBaseUrl: http://localhost:3000

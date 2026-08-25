@@ -21,10 +21,12 @@ spring:
       - optional:file:./env.properties
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false
-          lowerCaseServiceId: true
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: false
+              lower-case-service-id: true
 
 # Eureka configuration
 eureka:
@@ -43,11 +45,24 @@ management:
       enabled: true
   endpoint:
     gateway:
-      enabled: true
+      access: read-only
   endpoints:
     web:
       exposure:
-        include: info, health, refresh, gateway
+        include: info, health, refresh, gateway, prometheus
+  opentelemetry:
+    resource-attributes:
+      service.name: ${spring.application.name}
+      service.namespace: streamix
+      deployment.environment: ${spring.profiles.active}
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTEL_TRACES_ENDPOINT}
+  otlp:
+    metrics:
+      export:
+        url: ${OTEL_METRICS_ENDPOINT}
 
 app:
   allowedOrigins: ${ALLOWED_ORIGINS}
@@ -56,9 +71,12 @@ app:
 
 # Logging properties
 logging:
+  structured:
+    format:
+      console: ecs
   level:
     root: INFO
-    org.springframework.web: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.cloud.gateway: INFO
     com.mariuszilinskas: DEBUG

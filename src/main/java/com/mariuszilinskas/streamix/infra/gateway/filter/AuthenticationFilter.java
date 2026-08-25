@@ -8,7 +8,6 @@ import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,8 +19,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @NullMarked
 @Component
@@ -33,28 +31,36 @@ public class AuthenticationFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        ServerHttpRequest request = exchange.getRequest();
-
-        if (AppUtils.isPublicPath.test(request)) {
+        if (AppUtils.isPublicPath.test(exchange.getRequest())) {
             return chain.filter(exchange);
         }
 
         var payloadOpt = jwtService.extractPayload(exchange);
         if (payloadOpt.isEmpty()) {
             logger.error("Access token is missing for a protected path");
-            return onError(exchange, HttpStatus.UNAUTHORIZED);
+            return onError(exchange);
         }
 
         JwtPayload payload = payloadOpt.get();
-        String principal = payload.userId();
+        String userId = payload.userId();
         List<GrantedAuthority> authorities = extractAuthorities(payload);
 
-        var authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        var authentication = new UsernamePasswordAuthenticationToken(userId, null, authorities);
         logger.info("Set security context {}", payload);
 
-        return chain.filter(exchange)
-                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+        ServerWebExchange mutatedExchange = exchange.mutate()
+                .request(r -> r.headers(h -> h.set(AppUtils.USER_ID_HEADER, userId)))
+                .build();
 
+        return chain.filter(mutatedExchange)
+                .contextWrite(ctx -> {
+                    Map<String, String> merged = new HashMap<>(
+                            Objects.requireNonNull(ctx.getOrDefault(AppUtils.MDC_CONTEXT_KEY, Map.of()))
+                    );
+                    merged.put(AppUtils.MDC_USER_ID, userId);
+                    return ctx.put(AppUtils.MDC_CONTEXT_KEY, merged);
+                })
+                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
     }
 
     private List<GrantedAuthority> extractAuthorities(JwtPayload payload) {
@@ -72,9 +78,9 @@ public class AuthenticationFilter implements WebFilter {
         return authorities;
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, HttpStatus httpStatus) {
+    private Mono<Void> onError(ServerWebExchange exchange) {
         ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(httpStatus);
+        response.setStatusCode(HttpStatus.UNAUTHORIZED);
         return response.setComplete();
     }
 
