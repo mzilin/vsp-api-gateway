@@ -14,7 +14,6 @@ public final class AppUtils {
     // ------------------------------------------------------
 
     public static final String API_PREFIX = "/api/v1";
-    public static final String TIMESTAMP_FORMAT = "yyyy-MM-dd hh:mm:ss";
     public static final String ACCESS_TOKEN_NAME = "vsp_access";
     public static final String PATH_USER_ID = "_USER_ID_";
 
