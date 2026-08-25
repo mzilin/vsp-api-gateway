@@ -119,11 +119,18 @@ Ensure you have the following installed on your machine:
 
 ### Running with Docker
 
-1. Build the Docker image:
-    ```bash
-   docker build -t streamix-infra-gateway:latest .
+1. Create ~/.gradle/gradle.properties with your GitHub credentials:
+    ```properties
+    gpr.user=your_github_username
+    gpr.key=your_pat_token
     ```
-2. Run the container:
+2. Build the Docker image:
+    ```bash
+   docker build \
+      --secret id=gradle_properties,src=${HOME}/.gradle/gradle.properties \
+      -t streamix-infra-gateway:latest .
+    ```
+3. Run the container:
     ```bash
    docker run --rm --name streamix_gateway -p 8080:8080 streamix-infra-gateway:latest
     ```
