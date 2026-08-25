@@ -1,6 +1,6 @@
 package com.mariuszilinskas.streamix.infra.gateway.handlers;
 
-import com.mariuszilinskas.streamix.infra.gateway.dto.ErrorResponse;
+import com.mariuszilinskas.streamix.web.response.error.ErrorResponse;
 import com.mariuszilinskas.streamix.infra.gateway.exception.JwtTokenValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
