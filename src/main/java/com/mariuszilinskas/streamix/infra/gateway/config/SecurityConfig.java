@@ -7,6 +7,7 @@ import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
@@ -29,7 +30,9 @@ public class SecurityConfig {
         return http.cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(authorize -> authorize
-                        .pathMatchers(AppUtils.getPublicAccessPaths()).permitAll()
+                        .pathMatchers(HttpMethod.GET, AppUtils.getGetPublicPaths()).permitAll()
+                        .pathMatchers(HttpMethod.POST, AppUtils.getPostPublicPaths()).permitAll()
+                        .pathMatchers(AppUtils.getAnyMethodPublicPaths()).permitAll()
                         .pathMatchers(AppUtils.getAdminAccessPaths()).hasRole(UserRole.ADMIN.name())
                         .anyExchange().authenticated()
                 )
