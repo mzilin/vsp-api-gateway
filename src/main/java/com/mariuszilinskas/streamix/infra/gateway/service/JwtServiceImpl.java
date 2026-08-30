@@ -95,7 +95,6 @@ public class JwtServiceImpl implements JwtService {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException ex) {
-            System.out.println(ex.getMessage());
             throw new JwtTokenValidationException();
         }
     }
