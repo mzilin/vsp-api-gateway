@@ -18,7 +18,7 @@ spring:
   config:
     import:
       - optional:configserver:discovery://config-server
-      - optional:file:./env.properties
+      - optional:file:../env/dev.properties
   cloud:
     gateway:
       server:
