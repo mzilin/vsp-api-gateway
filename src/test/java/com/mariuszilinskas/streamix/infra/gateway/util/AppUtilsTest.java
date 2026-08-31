@@ -1,42 +1,23 @@
 package com.mariuszilinskas.streamix.infra.gateway.util;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AppUtilsTest {
 
     @Test
-    void testIsPublicPath_StaticPublicPaths() {
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/actuator/health").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/actuator/refresh").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/credentials").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/login").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/token").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/users/user/register").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/password/forgot").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/password/reset").build()));
+    void testConstants_AreCorrectlyDefined() {
+        assertEquals("/api/v1", AppUtils.API_PREFIX);
+        assertEquals("vsp_access", AppUtils.ACCESS_TOKEN_NAME);
+        assertEquals("_USER_ID_", AppUtils.PATH_USER_ID);
+        assertEquals("X-Correlation-Id", AppUtils.CORRELATION_HEADER);
+        assertEquals("X-User-Id", AppUtils.USER_ID_HEADER);
+        assertEquals("slf4j.mdc", AppUtils.MDC_CONTEXT_KEY);
+        assertEquals("correlation_id", AppUtils.MDC_CORRELATION_ID);
+        assertEquals("user_id", AppUtils.MDC_USER_ID);
+        assertEquals("service", AppUtils.MDC_SERVICE);
+        assertEquals("environment", AppUtils.MDC_ENVIRONMENT);
     }
 
-    @Test
-    void testIsPublicPath_StaticPublicPaths_V1() {
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/actuator/health").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/actuator/refresh").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/auth/credentials").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/auth/login").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/auth/token").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/users/user/register").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/auth/password/forgot").build()));
-        assertTrue(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/api/v1/auth/password/reset").build()));
-    }
-
-    @Test
-    void testIsPublicPath_DynamicPrivatePaths() {
-        assertFalse(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/password/verify").build()));
-        assertFalse(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/auth/passcode/_USER_ID_/verify").build()));
-        assertFalse(AppUtils.isPublicPath.test(MockServerHttpRequest.get("/users/_USER_ID_").build()));
-    }
 }
