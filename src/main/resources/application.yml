@@ -19,6 +19,7 @@ spring:
     import:
       - optional:configserver:discovery://config-server
       - optional:file:../env/dev.properties
+      - classpath:gateway-routes.yml
   cloud:
     gateway:
       server:
@@ -68,6 +69,13 @@ app:
   allowedOrigins: ${ALLOWED_ORIGINS}
   accessTokenSecret: ${ACCESS_TOKEN_SECRET}
   frontendBaseUrl: ${FRONTEND_BASE_URL}
+  cluster-keys:
+    AUTH: ${AUTH_CLUSTER_KEY}
+    USERS: ${USERS_CLUSTER_KEY}
+    MEDIA: ${MEDIA_CLUSTER_KEY}
+    DISCOVERY: ${DISCOVERY_CLUSTER_KEY}
+    STREAMING: ${STREAMING_CLUSTER_KEY}
+    BILLING: ${BILLING_CLUSTER_KEY}
 
 # Logging properties
 logging:

@@ -21,3 +21,10 @@ app:
   allowedOrigins: http://localhost:3000
   accessTokenSecret: dummy-secret-key
   frontendBaseUrl: http://localhost:3000
+  cluster-keys:
+    AUTH:      dummy-auth-key
+    USERS:     dummy-users-key
+    MEDIA:     dummy-media-key
+    DISCOVERY: dummy-discovery-key
+    STREAMING: dummy-streaming-key
+    BILLING:   dummy-billing-key
