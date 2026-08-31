@@ -19,7 +19,11 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.server.ServerWebExchange;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -125,42 +129,16 @@ public class JwtServiceImplTest {
     }
 
     @Test
-    void testExtractAccessToken_InvalidToken() {
+    void testExtractAccessToken_MissingCookie_ReturnsNull() {
         // Arrange
         when(exchange.getRequest()).thenReturn(request);
-        when(request.getCookies()).thenReturn(cookies);
-        when(httpCookie.getValue()).thenReturn("invalidAccessToken");
-
-        // Act & Assert
-        assertThrows(JwtTokenValidationException.class, () -> jwtService.extractUserId(exchange));
-    }
-
-    // ------------------------------------
-
-    @Test
-    void testExtractUserId_ValidToken() {
-        // Arrange
-        when(exchange.getRequest()).thenReturn(request);
-        when(request.getCookies()).thenReturn(cookies);
-        when(httpCookie.getValue()).thenReturn(validAccessToken);
+        when(request.getCookies()).thenReturn(new LinkedMultiValueMap<>());
 
         // Act
-        UUID response = jwtService.extractUserId(exchange);
+        String response = jwtService.extractAccessToken(exchange);
 
         // Assert
-        assertNotNull(response);
-        assertEquals(userId, response);
-    }
-
-    @Test
-    void testExtractUserId_InvalidToken() {
-        // Arrange
-        when(exchange.getRequest()).thenReturn(request);
-        when(request.getCookies()).thenReturn(cookies);
-        when(httpCookie.getValue()).thenReturn("invalidAccessToken");
-
-        // Act & Assert
-        assertThrows(JwtTokenValidationException.class, () -> jwtService.extractUserId(exchange));
+        assertNull(response);
     }
 
 }

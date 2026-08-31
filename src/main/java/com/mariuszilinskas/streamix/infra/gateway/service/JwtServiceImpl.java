@@ -15,7 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
 import javax.crypto.SecretKey;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -70,21 +73,6 @@ public class JwtServiceImpl implements JwtService {
                     .collect(Collectors.toList());
         }
         return Collections.emptyList();
-    }
-
-    @Override
-    public UUID extractUserId(ServerWebExchange exchange) {
-        String token = extractAccessToken(exchange);
-
-        if (token == null || token.isBlank())
-            throw new JwtTokenValidationException();
-
-        Claims claims = extractClaims(token);
-        try {
-            return UUID.fromString(claims.getSubject());
-        } catch (IllegalArgumentException ex) {
-            throw new JwtTokenValidationException();
-        }
     }
 
     private Claims extractClaims(String token) {

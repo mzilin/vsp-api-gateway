@@ -1,19 +1,21 @@
 package com.mariuszilinskas.streamix.infra.gateway.filter;
 
-import com.mariuszilinskas.streamix.infra.gateway.service.JwtServiceImpl;
 import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
 import com.mariuszilinskas.streamix.infra.gateway.util.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest;
 import org.springframework.mock.web.server.MockServerWebExchange;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -22,13 +24,9 @@ import static org.mockito.Mockito.*;
 public class UserIdFilterTest {
 
     @Mock
-    private JwtServiceImpl jwtService;
-
-    @Mock
     private WebFilterChain chain;
 
-    @InjectMocks
-    private UserIdFilter filter;
+    private final UserIdFilter filter = new UserIdFilter();
 
     // ------------------------------------
 
@@ -38,13 +36,18 @@ public class UserIdFilterTest {
         MockServerWebExchange exchange = MockServerWebExchange.from(
                 MockServerHttpRequest.get("/users/" + AppUtils.PATH_USER_ID + "/profile").build()
         );
-        when(jwtService.extractUserId(exchange)).thenReturn(TestUtils.userId);
 
         ArgumentCaptor<ServerWebExchange> captor = ArgumentCaptor.forClass(ServerWebExchange.class);
         when(chain.filter(captor.capture())).thenReturn(Mono.empty());
 
+        var authentication = new UsernamePasswordAuthenticationToken(
+                TestUtils.userId.toString(), null, List.of()
+        );
+
         // Act
-        filter.filter(exchange, chain).block();
+        filter.filter(exchange, chain)
+                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication))
+                .block();
 
         // Assert
         String expectedPath = "/users/" + TestUtils.userId + "/profile";
@@ -65,7 +68,6 @@ public class UserIdFilterTest {
         filter.filter(exchange, chain).block();
 
         // Assert
-        verify(jwtService, never()).extractUserId(any());
         verify(chain).filter(exchange);
     }
 
