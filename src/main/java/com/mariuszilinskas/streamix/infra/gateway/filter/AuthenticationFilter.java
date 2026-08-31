@@ -1,5 +1,6 @@
 package com.mariuszilinskas.streamix.infra.gateway.filter;
 
+import com.mariuszilinskas.streamix.infra.gateway.config.AppProperties;
 import com.mariuszilinskas.streamix.infra.gateway.dto.JwtPayload;
 import com.mariuszilinskas.streamix.infra.gateway.service.JwtService;
 import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
@@ -8,6 +9,7 @@ import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -20,6 +22,7 @@ import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 @NullMarked
 @Component
@@ -27,11 +30,13 @@ import java.util.*;
 public class AuthenticationFilter implements WebFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+
     private final JwtService jwtService;
+    private final AppProperties appProps;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        if (AppUtils.isPublicPath.test(exchange.getRequest())) {
+        if (isPublicPath(exchange.getRequest())) {
             return chain.filter(exchange);
         }
 
@@ -61,6 +66,18 @@ public class AuthenticationFilter implements WebFilter {
                     return ctx.put(AppUtils.MDC_CONTEXT_KEY, merged);
                 })
                 .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+    }
+
+    private boolean isPublicPath(ServerHttpRequest request) {
+        String path = request.getURI().getPath();
+        var security = appProps.security();
+        return Stream.of(
+                        security.publicGetPaths(),
+                        security.publicPostPaths(),
+                        security.anyMethodPaths()
+                ).flatMap(List::stream)
+                .map(p -> p.endsWith("/**") ? p.substring(0, p.length() - 3) : p)
+                .anyMatch(p -> path.equals(p) || path.startsWith(p + "/"));
     }
 
     private List<GrantedAuthority> extractAuthorities(JwtPayload payload) {

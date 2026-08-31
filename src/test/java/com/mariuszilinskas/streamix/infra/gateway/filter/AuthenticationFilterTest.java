@@ -1,13 +1,14 @@
 package com.mariuszilinskas.streamix.infra.gateway.filter;
 
+import com.mariuszilinskas.streamix.infra.gateway.config.AppProperties;
 import com.mariuszilinskas.streamix.infra.gateway.dto.JwtPayload;
 import com.mariuszilinskas.streamix.infra.gateway.service.JwtService;
 import com.mariuszilinskas.streamix.infra.gateway.util.AppUtils;
 import com.mariuszilinskas.streamix.infra.gateway.util.TestUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,6 @@ public class AuthenticationFilterTest {
     @Mock
     private WebFilterChain chain;
 
-    @InjectMocks
     private AuthenticationFilter filter;
 
     private static final String userId = TestUtils.userId.toString();
@@ -42,13 +42,25 @@ public class AuthenticationFilterTest {
             userId, List.of("USER", "ADMIN"), List.of("MANAGE_SETTINGS"), new Date()
     );
 
+    @BeforeEach
+    void setUp() {
+        AppProperties.SecurityPaths security = new AppProperties.SecurityPaths(
+                List.of("/", "/actuator/health"),
+                List.of("/actuator/refresh", "/api/v1/auth/login", "/api/v1/session/logout/**"),
+                List.of(),
+                List.of("/api/v1/account/admin/**")
+        );
+        AppProperties appProps = new AppProperties(List.of(), java.util.Map.of(), security);
+        filter = new AuthenticationFilter(jwtService, appProps);
+    }
+
     // ------------------------------------
 
     @Test
     void testFilter_PublicPath_BypassesAuthentication() {
         // Arrange
         MockServerWebExchange exchange = MockServerWebExchange.from(
-                MockServerHttpRequest.get("/auth/login").build()
+                MockServerHttpRequest.get("/actuator/health").build()
         );
         when(chain.filter(exchange)).thenReturn(Mono.empty());
 
