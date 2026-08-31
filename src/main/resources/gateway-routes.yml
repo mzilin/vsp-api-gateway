@@ -1,0 +1,65 @@
+app:
+  routes:
+    - path: auth
+      cluster: AUTH
+      service: IDENTITY
+
+    - path: session
+      cluster: AUTH
+      service: SESSION
+
+    - path: account
+      cluster: USERS
+      service: ACCOUNT
+
+    - path: profile
+      cluster: USERS
+      service: PROFILE
+
+    - path: watchlist
+      cluster: USERS
+      service: WATCHLIST
+
+    - path: catalog
+      cluster: MEDIA
+      service: CATALOG
+
+    - path: search
+      cluster: DISCOVERY
+      service: SEARCH
+
+    - path: playback
+      cluster: STREAMING
+      service: PLAYBACK
+
+    - path: watch-history
+      cluster: STREAMING
+      service: WATCH_HISTORY
+
+    - path: payments
+      cluster: BILLING
+      service: PAYMENTS
+
+    - path: subscriptions
+      cluster: BILLING
+      service: SUBSCRIPTIONS
+
+  security:
+    public-get-paths:
+      - /
+      - /actuator/health
+
+    public-post-paths:
+      - /api/v1/auth/login
+      - /api/v1/auth/password/forgot
+      - /api/v1/auth/password/reset
+      - /api/v1/session/token
+      - /api/v1/session/logout/**
+      - /api/v1/account/user/register
+
+    any-method-paths: []
+
+    admin-paths:
+      - /api/v1/account/admin/**
+      - /api/v1/profile/admin/avatars/**
+      - /api/v1/catalog/admin/**
